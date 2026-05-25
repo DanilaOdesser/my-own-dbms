@@ -28,7 +28,7 @@ with KeyValueStore("./mystore.log") as kv:
 From the repo root, with the existing `.venv`:
 
 ```
-.venv/bin/pytest HW8/ -v
+.venv/bin/pytest HW7/ -v
 ```
 
 16 tests covering basic CRUD, persistence across reopen, unicode, escape round-tripping, empty key/value, type validation, torn-tail recovery, corrupt-log rejection, and a 1000-key replay.

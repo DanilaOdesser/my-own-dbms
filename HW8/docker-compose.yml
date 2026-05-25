@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: hw8-postgres
+    environment:
+      POSTGRES_USER: bench
+      POSTGRES_PASSWORD: bench
+      POSTGRES_DB: taxi
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bench -d taxi"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: hw8-clickhouse
+    environment:
+      CLICKHOUSE_DB: taxi
+      CLICKHOUSE_USER: bench
+      CLICKHOUSE_PASSWORD: bench
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "8124:8123"  # HTTP
+      - "9001:9000"  # native
+    volumes:
+      - chdata:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  pgdata:
+  chdata:
